@@ -3,10 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js">
-    </script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="paper-full.js"></script>
-    <script type="text/paperscript" canvas="myCanvas">
+    <script type="text/javascript" canvas="myCanvas">
     var center = new Point(300, 200);
     var path = new Path.Circle(center, 200);
     var rand = 1;
@@ -16,141 +15,110 @@
     var fontHead = 40;
     var fontBody = 30;
     var text0 = new PointText({
-    	justification: 'center',
-      fontFamily: 'Courier New',
-    	fontSize: fontHead,
-    	point: center,
-    	fillColor: 'white'
+        justification: 'center',
+        fontFamily: 'Courier New',
+        fontSize: fontHead,
+        point: center,
+        fillColor: 'white'
     });
 
-text = []
-colors = ["red","blue","green","yellow"]
-for (var i =0;i<4;i++){
-  text.push(new PointText({
-    justification: 'center',
-    fontSize:30,
-    point: path.segments[i].point,
-    fillColor: colors[i]
-  }))
-}
-var text1 = text[0];
-var text2 = text[1];
-var text3 = text[2];
-var text4 = text[3];
+    text = []
+    colors = ["red","blue","green","yellow"]
+    for (var i =0;i<4;i++){
+      text.push(new PointText({
+        justification: 'center',
+        fontSize:30,
+        point: path.segments[i].point,
+        fillColor: colors[i]
+      }))
+    }
 
-destination0 = Point.random() * view.size;
-destination00 = Point.random() * view.size;
-destination = path.segments[0].point
-destination2 = path.segments[1].point
-destination3 = path.segments[2].point
-destination4 = path.segments[3].point
+    destination0 = Point.random() * view.size;
+    destination00 = Point.random() * view.size;
 
+    function onFrame(event) {
+        path.rotate(speed);
+        vector0 = destination0 - path.position;
+        path.position  += vector0 / num;
+        vector00 = destination00 - text0.position;
+        text0.position  += vector00 / num2;
+        text0.content = $("#para").html();
+        text0.opacity = Math.random()+rand
+        text0.fontSize = fontHead;
+        for(var i = 0;i < 4;i++) {
+            vector = path.segments[i].point - text[i].position;
+            text[i].position += vector;
+            text[i].content = $('#para' + (i+2)).html();
+            text[i].opacity = Math.random() + rand;
+            text[i].fontSize = fontBody;
+        }
+        if (vector0.length < 5) {
+            var randPoint = Point.random() * view.size;
+            destination0 = randPoint;
+            destination00 = randPoint;
+        }
+    }
 
-
-function onFrame(event) {
-
-  path.rotate(speed);
-  vector0 = destination0 - path.position;
-  path.position  += vector0 / num;
-  vector00 = destination00 - text0.position;
-  text0.position  += vector00 / num2;
-  text0.content = $("#para").html();
-  text0.opacity = Math.random()+rand
-  text0.fontSize = fontHead;
-  vector = destination - text1.position;
-  text1.position  += vector;
-  text1.content = $("#para2").html();
-  text1.opacity = Math.random()+rand
-  text1.fontSize = fontBody;
-  vector2 = destination2 - text2.position;
-  text2.position  += vector2;
-  text2.content = $("#para3").html()
-  text2.opacity = Math.random()+rand;
-  text2.fontSize = fontBody;
-  vector3 = destination3 - text3.position;
-  text3.position  += vector3;
-  text3.content = $("#para4").html();
-  text3.opacity = Math.random()+rand;
-  text3.fontSize = fontBody;
-  vector4 = destination4 - text4.position;
-  text4.position  += vector4;
-  text4.content = $("#para5").html();
-  text4.opacity = Math.random()+rand;
-  text4.fontSize = fontBody;
-  if (vector0.length < 5) {
-      var randPoint = Point.random() * view.size;
-    destination0 = randPoint;
-    destination00 = randPoint;
-  }
-}
     function onMouseDown(event) {
-    if (text1.contains(event.point)) {
-        $("#para").html(text1.content)
-    } else if (text2.contains(event.point)) {
-        $("#para").html(text2.content)
-    } else if (text3.contains(event.point)){
-        $("#para").html(text3.content)
-    } else if (text4.contains(event.point)){
-        $("#para").html(text4.content)
+        if (text[0].contains(event.point)) {
+            $("#para").html(text[0].content)
+        } else if (text[1].contains(event.point)) {
+            $("#para").html(text[1].content)
+        } else if (text[2].contains(event.point)){
+            $("#para").html(text[2].content)
+        } else if (text[3].contains(event.point)){
+            $("#para").html(text[3].content)
+        }
     }
-  }
 
-  function onKeyDown(event) {
-    if (event.key == 'right') {
-        text0.fillColor = 'pink';
-        speed++;
+    function onKeyDown(event) {
+        switch (event.key) {
+            case 'right':
+                text0.fillColor = 'pink';
+                speed++;
 
-        if (speed === 1)
-          {var sound2 = new Howl({
-                    src: ['sounds/warpDrive.mp3']
-                  }).play();
+                if (speed === 1) {
+                    new Howl({
+                        src: ['sounds/warpDrive.mp3']
+                    }).play();
                 }
+                break;
 
-    }
-    if (event.key == 'left') {
-        text0.fillColor = 'orange';
-        speed--;
-        if (speed === -5)
-          {var sound3 = new Howl({
-                    src: ['sounds/wrongWay.mp3']
-                  }).play();
+            case 'left':
+                text0.fillColor = 'orange';
+                speed--;
+                if (speed === -5) {
+                    new Howl({
+                        src: ['sounds/wrongWay.mp3']
+                    }).play();
                 }
-    }
+                break;
 
-    if (event.key == '1') {
-      rand = 1;
-    }
-    if (event.key == '2'){
-      rand =0;
-    }
+            case '1':
+                rand = 1;
+                break;
 
-    if (event.key == 'a'){
-      fontHead++;
-    }
-    if (event.key == 's'){
-      fontHead--;
-    }
-    if (event.key == 'z'){
-      fontBody++;
-    }
-    if (event.key == 'x'){
-      fontBody--;
-    }
-  }
+            case '2':
+                rand = 0;
+                break;
 
-  // function onMouseDown(event) {
-  //   if (text0.contains(event.point)) {
-  //       text0.fillColor = 'red';
-  //       path = new Path.Circle(center, 200)
-  //       var sound = new Howl({
-  //                 src: ['sounds/test1.mp3']
-  //               }).play();
-  //
-  //   }
-  // }
+            case 'a':
+                fontHead++;
+                break;
 
+            case 's':
+                fontHead--;
+                break;
 
+            case 'z':
+                fontBody++;
+                break;
 
+           case 'x':
+                fontBody--;
+                break;
+        }
+    }
     </script>
     <script src="./main.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.js"></script>
